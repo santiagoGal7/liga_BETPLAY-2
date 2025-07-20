@@ -4,6 +4,10 @@ from datetime import datetime
 def limpiar_consola():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def devo_bucle():
+    input("Presiona ENTER para volver a intentarlo...")
+    print("\033[F\033[K" * 3, end='')
+
 def mostrar_menu(): 
 
     print("\nMENÚ DE OPCIONES:")
@@ -21,8 +25,10 @@ def inscribir_equipo(conjunto_equipos):
         nombre_nuevo_equipo = input("Introduce el nombre del nuevo equipo: ").strip().lower()
         if not nombre_nuevo_equipo:
             print("Error: El nombre del equipo no puede estar vacío. Inténtalo de nuevo.")
+            devo_bucle()
         elif nombre_nuevo_equipo in conjunto_equipos:
             print("Error: El equipo ya está registrado. Inténtalo con otro nombre.")
+            devo_bucle()
         else:
             conjunto_equipos[nombre_nuevo_equipo] = {
                 "pj": 0, "pg": 0, "pp": 0, "pe": 0, "gf": 0, "gc": 0, 
@@ -43,8 +49,10 @@ def definir_encuentro(conjunto_equipos, agenda_partidos):
         equipo_local = input("Introduce el nombre del equipo local: ").strip().lower()
         if not equipo_local:
             print("Error: El nombre del equipo local no puede estar vacío.")
+            devo_bucle()
         elif equipo_local not in conjunto_equipos:
             print("Error: El equipo local no está registrado. Por favor, regístralo primero.")
+            devo_bucle()
         else:
             break
     
@@ -52,10 +60,13 @@ def definir_encuentro(conjunto_equipos, agenda_partidos):
         equipo_visitante = input("Introduce el nombre del equipo visitante: ").strip().lower()
         if not equipo_visitante:
             print("Error: El nombre del equipo visitante no puede estar vacío.")
+            devo_bucle()
         elif equipo_visitante not in conjunto_equipos:
             print("Error: El equipo visitante no está registrado. Por favor, regístralo primero.")
+            devo_bucle()
         elif equipo_local == equipo_visitante:
             print("Error: Un equipo no puede jugar contra sí mismo. Elige otro equipo visitante.")
+            devo_bucle()
         else:
             break
     
@@ -63,6 +74,7 @@ def definir_encuentro(conjunto_equipos, agenda_partidos):
         fecha_str = input("Introduce la fecha del partido (DD-MM-AAAA): ").strip()
         if not fecha_str:
             print("Error: La fecha no puede estar vacía.")
+            devo_bucle()
             continue
         try:
             dia, mes, anno = map(int, fecha_str.split('-'))
@@ -71,6 +83,7 @@ def definir_encuentro(conjunto_equipos, agenda_partidos):
             # Fechas en el pasado 
             if fecha_partido < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0):
                 print("Error: No puedes programar un partido en una fecha anterior a la actual.")
+                devo_bucle()
                 continue
 
             #  Duplicidad de partidos 
@@ -84,11 +97,13 @@ def definir_encuentro(conjunto_equipos, agenda_partidos):
             
             if partido_ya_existe:
                 print(f"Error: Ya existe un partido programado entre '{equipo_local.capitalize()}' y '{equipo_visitante.capitalize()}' para la fecha {fecha_partido.strftime('%d-%m-%Y')}.")
+                devo_bucle()
                 continue
 
             break
         except ValueError:
             print("Error: Formato de fecha incorrecto o fecha inválida. Usa DD-MM-AAAA.")
+            devo_bucle()
 
     partido_nuevo = {
         "local": equipo_local,
@@ -121,6 +136,7 @@ def cargar_marcador(conjunto_equipos, agenda_partidos):
             seleccion = input("Selecciona el número del partido para registrar el marcador: ").strip()
             if not seleccion:
                 print("Error: La selección no puede estar vacía.")
+                devo_bucle()
                 continue
             seleccion = int(seleccion) - 1
             if 0 <= seleccion < len(encuentros_por_resolver):
@@ -128,6 +144,7 @@ def cargar_marcador(conjunto_equipos, agenda_partidos):
                 
                 if partido_seleccionado['local'] not in conjunto_equipos or partido_seleccionado['visitante'] not in conjunto_equipos:
                     print("Error: Uno o ambos equipos de este partido ya no están registrados. No se puede registrar el marcador.")
+                    devo_bucle()
                     return # Se sale de la función si los equipos no existen
 
                 while True:
@@ -135,28 +152,34 @@ def cargar_marcador(conjunto_equipos, agenda_partidos):
                         goles_local_str = input(f"Goles de {partido_seleccionado['local'].capitalize()}: ").strip()
                         if not goles_local_str:
                             print("Error: Los goles del equipo local no pueden estar vacíos.")
+                            devo_bucle()
                             continue
                         goles_local = int(goles_local_str)
                         if goles_local < 0:
                             print("Error: Los goles no pueden ser números negativos.")
+                            devo_bucle()
                             continue
                         break
                     except ValueError:
                         print("Error: Debes introducir un número entero para los goles.")
+                        devo_bucle()
 
                 while True:
                     try:
                         goles_visitante_str = input(f"Goles de {partido_seleccionado['visitante'].capitalize()}: ").strip()
                         if not goles_visitante_str:
                             print("Error: Los goles del equipo visitante no pueden estar vacíos.")
+                            devo_bucle()
                             continue
                         goles_visitante = int(goles_visitante_str)
                         if goles_visitante < 0:
                             print("Error: Los goles no pueden ser números negativos.")
+                            devo_bucle()
                             continue
                         break
                     except ValueError:
                         print("Error: Debes introducir un número entero para los goles.")
+                        devo_bucle()
 
                 partido_seleccionado["marcador_local"] = goles_local
                 partido_seleccionado["marcador_visitante"] = goles_visitante
@@ -187,6 +210,7 @@ def cargar_marcador(conjunto_equipos, agenda_partidos):
                 print("Opción no válida. Por favor, selecciona un número de la lista.")
         except ValueError:
             print("Error: Debes introducir un número válido.")
+            devo_bucle()
 
 def equipo_mas_goles_favor(conjunto_equipos):
 
@@ -225,8 +249,7 @@ def agregar_jugador(conjunto_equipos, nombre_equipo):
         nombre = input("Nombre del jugador: ").strip().capitalize()
         if not nombre:
             print("Error: El nombre del jugador no puede estar vacío.")
-            input("Presiona ENTER para volver a intentarlo...")
-            print("\033[F\033[K" * 3, end='') 
+            devo_bucle()
             continue
         
         # Validar duplicidad de jugador por nombre y dorsal dentro del equipo
@@ -237,6 +260,7 @@ def agregar_jugador(conjunto_equipos, nombre_equipo):
                 existe_jugador = True
                 break
         if existe_jugador:
+            devo_bucle()
             continue
 
         while True:
@@ -244,15 +268,13 @@ def agregar_jugador(conjunto_equipos, nombre_equipo):
                 dorsal_str = input("Dorsal del jugador: ").strip()
                 if not dorsal_str:
                     print("Error: El dorsal no puede estar vacío.")
-                    input("Presiona ENTER para volver a intentarlo...")
-                    print("\033[F\033[K" * 2, end='') 
+                    devo_bucle()
                     continue
 
                 dorsal = int(dorsal_str)
                 if not (1 <= dorsal <= 99):
                     print("Error: El dorsal debe ser un número entre 1 y 99.")
-                    input("Presiona ENTER para volver a intentarlo...")
-                    print("\033[F\033[K" * 3, end='')
+                    devo_bucle()
                     continue
 
                 # Validar que el dorsal no esté duplicado para el mismo equipo
@@ -263,16 +285,17 @@ def agregar_jugador(conjunto_equipos, nombre_equipo):
                         existe_dorsal = True
                         break
                 if existe_dorsal:
+                    devo_bucle()
                     continue
                 break
             except ValueError:
                 print("Error: El dorsal debe ser un número entero.")
+                devo_bucle()
 
         posicion = input("Posición del jugador: ").strip().capitalize()
         if not posicion:
             print("Error: La posición no puede estar vacía.")
-            input("Presiona ENTER para volver a intentarlo...")
-            print("\033[F\033[K" * 3, end='')
+            devo_bucle()
             continue
 
         while True:
@@ -280,14 +303,17 @@ def agregar_jugador(conjunto_equipos, nombre_equipo):
                 edad_str = input("Edad del jugador: ").strip()
                 if not edad_str:
                     print("Error: La edad no puede estar vacía.")
+                    devo_bucle()
                     continue
                 edad = int(edad_str)
                 if not (16 <= edad <= 99): 
-                    print("Error: La edad debe ser un número entre 5 y 99.")
+                    print("Error: La edad debe ser un número entre 16 y 99.")
+                    devo_bucle()
                     continue
                 break
             except ValueError:
                 print("Error: La edad debe ser un número entero.")
+                devo_bucle()
 
         jugador = {"nombre": nombre, "dorsal": dorsal, "posicion": posicion, "edad": edad}
         conjunto_equipos[nombre_equipo]["plantel"]["jugadores"].append(jugador)
@@ -300,6 +326,7 @@ def agregar_cuerpo_tecnico(conjunto_equipos, nombre_equipo):
         nombre = input("Nombre del personal técnico: ").strip().capitalize()
         if not nombre:
             print("Error: El nombre del personal técnico no puede estar vacío.")
+            devo_bucle()
             continue
         
         # Validar duplicidad de personal técnico por nombre y cargo dentro del equipo
@@ -310,11 +337,13 @@ def agregar_cuerpo_tecnico(conjunto_equipos, nombre_equipo):
                 existe_personal = True
                 break
         if existe_personal:
+            devo_bucle()
             continue
 
         cargo = input("Cargo (Ej: Entrenador, Fisioterapeuta): ").strip().capitalize()
         if not cargo:
             print("Error: El cargo no puede estar vacío.")
+            devo_bucle()
             continue
         
         # Validar duplicidad de personal técnico por nombre y cargo dentro del equipo
@@ -325,6 +354,7 @@ def agregar_cuerpo_tecnico(conjunto_equipos, nombre_equipo):
                 existe_personal_cargo = True
                 break
         if existe_personal_cargo:
+            devo_bucle()
             continue
 
         personal = {"nombre": nombre, "cargo": cargo}
@@ -343,8 +373,10 @@ def registrar_plantel(conjunto_equipos):
         nombre_equipo = input("Introduce el nombre del equipo para registrar su plantel: ").strip().lower()
         if not nombre_equipo:
             print("Error: El nombre del equipo no puede estar vacío.")
+            devo_bucle()
         elif nombre_equipo not in conjunto_equipos:
             print("Error: El equipo no está registrado. Inténtalo de nuevo.")
+            devo_bucle()
         else:
             break
     
